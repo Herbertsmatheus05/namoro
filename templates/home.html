@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nosso Cantinho 💖</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff6b8b;
+      --secondary-color: #ffb8c6;
+      --dark-color: #343a40;
+      --light-color: #f8f9fa;
+    }
+    
+    body {
+      background-color: #fff9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* NOVO: Estilo para os fogos de artifício */
+    #fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* [MANTENHA TODOS OS SEUS OUTROS ESTILOS AQUI] */
+    h1 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+    
+    #timer {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .btn-custom {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      transition: all 0.3s;
+    }
+    
+    .btn-custom:hover {
+      background-color: #ff4d73;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .gallery {
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    
+    .gallery img {
+      width: 100%;
+      max-width: 300px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+    
+    .gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .upload-section {
+      background-color: var(--light-color);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      border: 2px dashed var(--secondary-color);
+    }
+    
+    .heart-divider {
+      text-align: center;
+      margin: 2rem 0;
+      color: var(--primary-color);
+    }
+    
+    .photo-counter {
+      background-color: var(--secondary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-image {
+      max-height: 80vh;
+      width: auto;
+      max-width: 100%;
+    }
+    
+    .loading-spinner {
+      display: none;
+      width: 2rem;
+      height: 2rem;
+      border: 0.25rem solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- NOVO: Canvas para os fogos (ADICIONE ESTA LINHA) -->
+  <canvas id="fireworks"></canvas>
+
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1><i class="fas fa-heart"></i> Bem-vindos ao Nosso Cantinho <i class="fas fa-heart"></i></h1>
+      <a href="/logout" class="btn btn-sm btn-outline-danger">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </a>
+    </div>
+    
+    <div id="timer" class="d-flex flex-column align-items-center">
+      <span class="mb-1">Nossa jornada juntos:</span>
+      <span id="time-counter" class="fs-4 fw-bold">0 dias, 0 horas, 0 minutos, 0 segundos</span>
+    </div>
+    
+    <div id="upload-section" class="upload-section text-center">
+      <h4><i class="fas fa-camera me-2"></i>Adicione uma nova foto ao nosso álbum</h4>
+      <form id="uploadForm" class="mt-3">
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+          <input type="file" id="fileInput" accept="image/*" class="form-control" required style="max-width: 400px;">
+          <button type="button" id="uploadBtn" class="btn btn-custom" onclick="uploadFile()">
+            <i class="fas fa-upload me-2"></i>Enviar Foto
+            <span id="loadingSpinner" class="loading-spinner ms-2"></span>
+          </button>
+        </div>
+        <small class="text-muted mt-2 d-block">Formatos suportados: JPG, PNG, GIF (Máx. 5MB)</small>
+      </form>
+      <div id="uploadStatus" class="mt-2"></div>
+    </div>
+    
+    <div class="heart-divider">
+      <i class="fas fa-heart fa-2x"></i>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="m-0"><i class="fas fa-images me-2"></i>Nossas Memórias</h3>
+      <span id="photoCounter" class="photo-counter">0 fotos</span>
+    </div>
+    
+    <div id="gallery" class="gallery">
+      <!-- As fotos serão carregadas dinamicamente via JavaScript -->
+    </div>
+    
+    <div id="emptyGallery" class="text-center py-4" style="display: none;">
+      <i class="fas fa-images fa-4x mb-3" style="color: var(--secondary-color);"></i>
+      <p class="fs-5">Nenhuma foto ainda. Adicione a primeira memória do nosso cantinho!</p>
+    </div>
+  </div>
+  
+  <!-- Modal para visualização de fotos -->
+  <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nossa Memória</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="modalImage" src="" alt="Foto ampliada" class="modal-image img-fluid">
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-custom" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- NOVO: Adicione esta linha ANTES do script do Firebase -->
+  <script src="{{ url_for('static', filename='js/fireworks.js') }}"></script>
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    
+    // Seu código Firebase existente...
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFdSECqH9gQgpjRAzbaHtlnmdigBazBQI",
+      authDomain: "nosso-cantinho-9b3cd.firebaseapp.com",
+      projectId: "nosso-cantinho-9b3cd",
+      storageBucket: "nosso-cantinho-9b3cd.appspot.com",
+      messagingSenderId: "343639956353",
+      appId: "1:343639956353:web:b360bdb363c7844273e680",
+      measurementId: "G-Z4WGJ9KPZQ"
+    };
+    
+    // ... (restante do seu código JavaScript existente)
+  </script>
+</body>
+</html>
