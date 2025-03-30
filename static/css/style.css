@@ -1,0 +1,53 @@
+/* Estilos para o login */
+.login-container {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(255, 107, 139, 0.2);
+  overflow: hidden;
+  background: white;
+}
+
+.login-card .card-body {
+  padding: 2rem;
+}
+
+.login-input {
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: 2px solid #ffb8c6;
+  transition: all 0.3s;
+}
+
+.login-input:focus {
+  border-color: #ff6b8b;
+  box-shadow: 0 0 0 0.25rem rgba(255, 107, 139, 0.25);
+}
+
+.btn-login {
+  background-color: #ff6b8b;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-login:hover {
+  background-color: #ff4d73;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 107, 139, 0.3);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
